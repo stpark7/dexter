@@ -1,0 +1,19 @@
+n_worker: 48
+setting: fc  # fc or tabletop
+
+defaults:
+  - _self_
+  - task: eval_dexter
+  - hand: shadow
+
+hand_name: ${hydra:runtime.choices.hand}
+
+hydra:
+  run:
+    dir: .  # Stay in CWD so relative asset paths (xml_path, etc.) remain valid
+  job_logging:
+    root:
+      handlers: []
+  hydra_logging:
+    root:
+      handlers: []

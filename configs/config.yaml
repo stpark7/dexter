@@ -1,0 +1,21 @@
+# Hydra defaults: compose configs from modular files
+defaults:
+  - model: dexter
+  - training: default
+  - data: dexgys
+  - _self_ # Load this config last to allow overrides
+
+# Wandb
+wandb:
+  enabled: true
+  project: "dexter"
+  entity: "junha-lee"
+
+# Experiment name 
+experiment_name: "dexter"
+# Override specific settings
+# model:
+#   action_dim: 32 # Shadow Hand DOF
+
+# Optional: Load from pretrained
+# pretrained_checkpoint: "./checkpoints/pi0_base"

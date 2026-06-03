@@ -1,0 +1,62 @@
+# Dexonomy no-ECoT config (action-only, for comparison)
+name: dexonomy_no_ecot
+path: /root/data/dexonomy_final
+
+# Path to normalization statistics
+overfitting: false
+max_points: 10000
+max_num_tokens: 128 # Increased for ECoT (contact + action tokens)
+padding_side: "left"
+norm_stats_path: ./assets/dexonomy
+
+# Training transforms with ECoT support
+transforms:
+  normalize_pc:
+    _target_: dexter.data.transforms.NormalizePointCloud
+    enabled: false
+
+  rotate:
+    _target_: dexter.data.transforms.RotateSceneZ
+    angle_range: [0, 6.283185307179586] # 0 to 2*pi radians
+    enabled: false
+
+  normalize:
+    _target_: dexter.data.transforms.Normalize
+    norm_stats: !!null
+    use_quantiles: true
+    enabled: true
+
+  tokenize:
+    _target_: dexter.data.transforms.TokenizePromptQwen3
+    base_tokenizer: !!null
+    action_tokenizer: !!null
+    max_length: 128
+    enabled: true
+
+  to_tensor:
+    _target_: dexter.data.transforms.ToTensor
+    enabled: true
+
+eval_transforms:
+  tokenize:
+    _target_: dexter.data.transforms.TokenizePromptQwen3
+    base_tokenizer: !!null
+    action_tokenizer: !!null
+    max_length: 128
+    enabled: true
+
+  to_tensor:
+    _target_: dexter.data.transforms.ToTensor
+    enabled: true
+
+post_transforms:
+  detokenize_action:
+    _target_: dexter.data.transforms.DetokenizeAction
+    action_tokenizer: !!null
+    enabled: true
+
+  unnormalize:
+    _target_: dexter.data.transforms.Unnormalize
+    norm_stats: !!null
+    use_quantiles: true
+    enabled: true

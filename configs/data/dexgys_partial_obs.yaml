@@ -1,0 +1,83 @@
+# DexGYS ECoT with Partial RGB-D Observation
+# Finetune pretrained model on simulated partial point cloud observations
+name: dexgys_partial_obs
+path: /root/data/dexgys_final
+
+overfitting: false
+max_points: 10000  # Important: enables resampling for variable-size partial clouds
+max_num_tokens: 176
+padding_side: "left"
+norm_stats_path: ./assets/dexgys
+
+# Transforms: partial observation -> normalize -> tokenize -> tensor
+transforms:
+  # Partial observation simulation (MUST be before normalization)
+  partial_obs:
+    _target_: dexter.data.rgbd_simulation.SimulatePartialRGBDObservation
+    num_views: 2  # ego + third-person
+    camera_radius: 0.15  # ego offset distance
+    camera_mode: "ego_thirdperson"  # realistic dual-camera setup
+    hpr_radius_factor: 100.0
+    seed: !!null  # Random each call for augmentation
+    add_noise: true  # Simulate sensor noise
+    depth_noise_std: 0.002  # 2mm depth noise (typical RGB-D)
+    lateral_noise_std: 0.001  # 1mm lateral noise
+    outlier_ratio: 0.01  # 1% flying pixels
+    enabled: true
+
+  normalize_pc:
+    _target_: dexter.data.transforms.NormalizePointCloud
+    enabled: false
+
+  rotate:
+    _target_: dexter.data.transforms.RotateSceneZ
+    angle_range: [0, 6.283185307179586]
+    enabled: false  # Can enable for more augmentation
+
+  normalize:
+    _target_: dexter.data.transforms.Normalize
+    norm_stats: !!null
+    use_quantiles: true
+    enabled: true
+
+  tokenize:
+    _target_: dexter.data.transforms.TokenizePromptQwen3
+    base_tokenizer: !!null
+    action_tokenizer: !!null
+    max_length: 144
+    training_stage: 2  # 2 = full ECoT
+    is_training: true
+    contact_position_dropout: 0.0
+    enabled: true
+
+  to_tensor:
+    _target_: dexter.data.transforms.ToTensor
+    enabled: true
+
+eval_transforms:
+  # No partial obs during eval - use separate eval script
+  tokenize:
+    _target_: dexter.data.transforms.TokenizePromptQwen3
+    base_tokenizer: !!null
+    action_tokenizer: !!null
+    max_length: 256
+    training_stage: 2
+    is_training: false
+    contact_position_dropout: 0.0
+    enabled: true
+
+  to_tensor:
+    _target_: dexter.data.transforms.ToTensor
+    enabled: true
+
+post_transforms:
+  detokenize_action:
+    _target_: dexter.data.transforms.DetokenizeAction
+    action_tokenizer: !!null
+    enabled: true
+
+  unnormalize:
+    _target_: dexter.data.transforms.Unnormalize
+    norm_stats: !!null
+    use_quantiles: true
+    enabled: true

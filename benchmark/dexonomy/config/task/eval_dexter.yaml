@@ -1,0 +1,33 @@
+
+# Dataset root paths
+data_path: ???
+
+# Path to predictions.json file (required)
+pred_path: ???
+
+# Output directories. If null, each defaults to <pred_path_dir>/<name>.
+eval_dir: null
+succ_dir: null
+log_dir: null
+debug_dir: null
+
+obj_mass: 0.1   # unit: kg
+miu_coef: [0.6, 0.02]
+debug_render: False
+debug_viewer: False
+skip_existing: True  # Skip already-evaluated grasps. Set to False to re-evaluate all.
+filter_ids_path: null  # Path to a text file with one identifier (obj_id/index) per line; if set, only those items are evaluated
+
+simulation_metrics:
+  max_pene: 0.01  # If initial hand penetration exceeds this, treat as failure
+  trans_thre: 0.05
+  angle_thre: 15
+
+analytic_fc_metrics:
+  contact_tip_only: False
+  contact_threshold: 0.005
+  type: ['qp', 'qp_dfc', 'q1', 'tdg', 'dfc']
+
+pene_contact_metrics:
+  contact_margin: 0.01  # unit: m. Max contact distance.
+  contact_threshold: 0.002

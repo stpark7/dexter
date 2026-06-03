@@ -1,0 +1,7 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# pytorch_kinematics is pure Python (no compiled extensions, no torch import at
+# build time), so it builds fine in an isolated environment. The build backend and
+# its requirements are declared here; metadata/packages still come from setup.py.

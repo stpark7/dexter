@@ -1,0 +1,99 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dexter"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Dexter Team"}
+]
+dependencies = [
+    "torch==2.8.0",
+    "transformers>=4.53.0,<5",
+    "accelerate>=1.2.0",
+    "timm>=1.0.0",
+    "einops>=0.8.0",
+    "trimesh>=4.0.0",
+    "h5py>=3.10.0",
+    "numpy>=1.22.4,<2.0.0",
+    "pillow>=11.0.0",
+    "hydra-core>=1.3.0",
+    "omegaconf>=2.3.0",
+    "wandb>=0.19.0",
+    "tqdm>=4.66.0",
+    "datasets>=3.0.0",
+    "setuptools",
+    "easydict",
+    "plyfile",
+    "lxml",
+    "tqdm-loggable",
+    "natsort",
+    "yacs",
+    "mujoco==3.3.2",
+    "transforms3d",
+    "scikit-learn",
+    "imageio",
+    "matplotlib",
+    "qpsolvers[clarabel]",
+    "fire",
+    "open3d",
+    "viser",
+    "point-e @ git+https://github.com/openai/point-e.git",
+    # Built against the installed torch (see [tool.uv] no-build-isolation-package)
+    "pointops",
+    "torch-fpsample",
+    "chamferdist",
+    "pytorch3d",
+    "torch-scatter",
+    "csdf",
+    "pytorch-kinematics",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# --- uv: resolve the CUDA/source-built deps in a single `uv sync` ---------------
+# These packages compile against the installed torch, so they must build without
+# isolation (using the project env). uv does a two-phase install: torch (and the
+# other isolated deps) install first, then these build against it.
+[tool.uv]
+no-build-isolation-package = [
+    "pointops",
+    "torch-fpsample",
+    "chamferdist",
+    "pytorch3d",
+    "csdf",
+]
+
+[tool.uv.sources]
+pointops = { git = "https://github.com/Pointcept/Pointcept.git", subdirectory = "libs/pointops" }
+torch-fpsample = { git = "https://github.com/leonardodalinky/pytorch_fpsample" }
+pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
+csdf = { path = "thirdparty/csdf", editable = true }
+pytorch-kinematics = { path = "thirdparty/pytorch_kinematics", editable = true }
+torch-scatter = { index = "pyg" }
+
+# torch-scatter ships prebuilt wheels on a flat (find-links style) index.
+[[tool.uv.index]]
+name = "pyg"
+url = "https://data.pyg.org/whl/torch-2.8.0+cu128.html"
+format = "flat"
+explicit = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = ["E501"]  # Line too long (handled by formatter)

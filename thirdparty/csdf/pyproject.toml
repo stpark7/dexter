@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# csdf compiles a CUDA/C++ extension and `import torch` at the top of setup.py, so
+# it must be built with --no-build-isolation (torch present in the project env).
+# Declaring static [project] metadata here lets uv read name/version WITHOUT running
+# the build backend during resolution (when the env is still empty); the actual
+# extension build is then deferred to install time, once torch is installed.
+[project]
+name = "csdf"
+version = "0.0.1"
+description = "CUDA signed distance field"
+requires-python = ">=3.8"

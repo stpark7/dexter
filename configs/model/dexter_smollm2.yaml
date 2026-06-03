@@ -1,0 +1,47 @@
+model_type: dexter_partfield_smollm2
+
+# ===== Point Cloud Encoder =====
+encoder:
+  type: partfield # "uni3d" or "partfield"
+  variant: base
+  normalize_point_cloud: true
+  downsample_patch_embeddings: true
+  freeze: false
+
+# ===== Language Model (SmolLM2 - uses Llama architecture) =====
+vlm:
+  model_id: HuggingFaceTB/SmolLM2-360M-Instruct  # SmolLM2-360M with instruction tuning
+  freeze: false
+
+tokenizer:
+  model_id: ${model.vlm.model_id}
+
+# ===== Action Space =====
+action_dim: 28 # Default, can be overridden
+action_horizon: 1
+use_state_input: false
+
+# ===== Action Settings =====
+action:
+  bins: 256
+  min_action: -1
+  max_action: 1
+  # ECoT position tokenization settings
+  position_bins: 256
+  min_position: -0.4
+  max_position: 0.4
+
+# ===== Hand Model =====
+shadowhand:
+  base_dir: ./assets/shadowhand
+
+# ===== Training =====
+attention_type: sdpa # "eager" or "sdpa" (Flash Attention)
+gradient_checkpointing: false
+label_smoothing: !!null
+
+# ===== Attention Scope =====
+# "text" = PC + text are bidirectional, actions are causal
+# "pointcloud" = Only PC is bidirectional, text + actions are causal
+bidirectional_attention_scope: "pointcloud"
+
