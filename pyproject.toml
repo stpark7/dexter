@@ -42,6 +42,7 @@ dependencies = [
     "qpsolvers[clarabel]",
     "fire",
     "open3d",
+    "ipywidgets>=8.0.4",
     "viser",
     "point-e @ git+https://github.com/openai/point-e.git",
     # Built against the installed torch (see [tool.uv] no-build-isolation-package)

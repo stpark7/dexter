@@ -26,7 +26,8 @@ fp16: false
 precision: bfloat16
 
 # Checkpointing & Evaluation
-do_eval: false
+do_eval: true
+eval_split: test
 save_steps: 5000
 eval_steps: 5000
 log_steps: 10

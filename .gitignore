@@ -11,6 +11,7 @@ output*/
 checkpoint*/
 ckpt/
 wandb/
+logs/
 test_output*/
 
 # Virtual environments
@@ -18,6 +19,9 @@ test_output*/
 
 # cache
 point_e_model_cache/
+.conda-pkgs/
+.hf-cache/
+.uv-cache/
 tmp/
 
 # Large assets
